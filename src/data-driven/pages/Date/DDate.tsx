@@ -12,7 +12,7 @@ const DDate = () => {
   };
 
   const handleDateNextButton = () => {
-    navigate('/data/complete');
+    navigate('/data/check');
     setDataFunnelData((prev) => ({ ...prev, date }));
   };
 

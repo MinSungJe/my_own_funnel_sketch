@@ -6,6 +6,7 @@ import DName from '../data-driven/pages/Name/DName';
 import DDate from '../data-driven/pages/Date/DDate';
 import DComplete from '../data-driven/pages/Complete/DComplete';
 import DataContextProvider from '../data-driven/contexts/DataContextProvider';
+import DCheck from '../data-driven/pages/Check/DCheck';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
           {
             path: 'date',
             element: <DDate />,
+          },
+          {
+            path: 'check',
+            element: <DCheck />,
           },
           {
             path: 'complete',

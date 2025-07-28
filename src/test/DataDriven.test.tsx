@@ -1,72 +1,61 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 
 describe('DataDriven 퍼널 테스트', () => {
-  const user = userEvent.setup();
+  let user: ReturnType<typeof userEvent.setup>;
+  let mockFetch: ReturnType<typeof vi.fn>;
 
-  it('데이터 중심 설계 화면에 들어오면 "현재: 데이터 중심 설계"가 표시된다.', async () => {
-    render(<App />);
-    const dataDrivenButton = screen.getByText('데이터 중심 설계');
-    await user.click(dataDrivenButton);
-
-    expect(screen.queryByText('현재: 데이터 중심 설계')).not.toBeNull();
-  });
-
-  it('퍼널을 통해 단계가 진행된다.', async () => {
-    render(<App />);
-    const dataDrivenButton = screen.getByText('데이터 중심 설계');
-    await user.click(dataDrivenButton);
-
-    const funnelStartButton = screen.getByText('퍼널 시작');
-    await user.click(funnelStartButton);
-
-    expect(screen.queryByText('이름을 입력해주세요.')).not.toBeNull();
-
-    const nameNextButton = screen.getByText('다음');
-    await user.click(nameNextButton);
-
-    expect(screen.queryByText('날짜를 입력해주세요.')).not.toBeNull();
-
-    const dateNextButton = screen.getByText('다음');
-    await user.click(dateNextButton);
-
-    expect(screen.queryByText('모든 입력이 완료되었습니다!')).not.toBeNull();
-  });
-
-  it('날짜까지 모두 입력하고 퍼널의 다음을 누르면 이름과 날짜를 담은 정보를 담은 POST 요청을 보내는 fetch 함수가 실행된다.', async () => {
-    const mockFetch = vi.fn(() =>
+  beforeEach(() => {
+    user = userEvent.setup();
+    mockFetch = vi.fn(() =>
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve({ success: true }),
       })
     );
     global.fetch = mockFetch as unknown as typeof fetch;
+  });
 
+  const navigateToFunnel = async () => {
     render(<App />);
+    await user.click(screen.getByText('데이터 중심 설계'));
+  };
 
-    const dataDrivenButton = screen.getByText('데이터 중심 설계');
-    await user.click(dataDrivenButton);
+  it('진입 시 "현재: 데이터 중심 설계"가 표시된다.', async () => {
+    await navigateToFunnel();
+    expect(screen.queryByText('현재: 데이터 중심 설계')).not.toBeNull();
+  });
 
-    const funnelStartButton = screen.getByText('퍼널 시작');
-    await user.click(funnelStartButton);
+  it('퍼널이 단계별로 정상 진행된다.', async () => {
+    await navigateToFunnel();
+
+    await user.click(screen.getByText('퍼널 시작'));
 
     expect(screen.getByText('이름을 입력해주세요.')).toBeInTheDocument();
-
-    const nameInput = screen.getByPlaceholderText('이름 입력');
-    await user.type(nameInput, '민성제');
-
-    const nameNextButton = screen.getByText('다음');
-    await user.click(nameNextButton);
+    await user.click(screen.getByText('다음'));
 
     expect(screen.getByText('날짜를 입력해주세요.')).toBeInTheDocument();
+    await user.click(screen.getByText('다음'));
 
-    const dateInput = screen.getByPlaceholderText('YYYY-MM-DD');
-    await user.type(dateInput, '2025-07-28');
+    expect(screen.getByText('입력한 내용을 확인해주세요.')).toBeInTheDocument();
+    await user.click(screen.getByText('확인'));
 
-    const dateNextButton = screen.getByText('다음');
-    await user.click(dateNextButton);
+    expect(screen.getByText('모든 입력이 완료되었습니다!')).toBeInTheDocument();
+  });
+
+  it('확인 시 입력 데이터를 포함한 POST 요청을 보낸다.', async () => {
+    await navigateToFunnel();
+
+    await user.click(screen.getByText('퍼널 시작'));
+    await user.type(screen.getByPlaceholderText('이름 입력'), '민성제');
+    await user.click(screen.getByText('다음'));
+
+    await user.type(screen.getByPlaceholderText('YYYY-MM-DD'), '2025-07-28');
+    await user.click(screen.getByText('다음'));
+
+    await user.click(screen.getByText('확인'));
 
     expect(mockFetch).toHaveBeenCalledTimes(1);
     expect(mockFetch).toHaveBeenCalledWith(
