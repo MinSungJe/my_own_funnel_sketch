@@ -1,0 +1,11 @@
+.title {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.startButton {
+  position: absolute;
+  bottom: 1rem;
+  transform: translateX(-50%);
+}
