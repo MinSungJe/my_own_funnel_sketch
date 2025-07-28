@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
-import DataHome from '../data-driven/DataHome';
-import ResponsibilityHome from '../responsibility-driven/ResponsibilityHome';
+import DataHome from '../data-driven/Home/DataHome';
+import ResponsibilityHome from '../responsibility-driven/Home/ResponsibilityHome';
 
 const router = createBrowserRouter([
   {

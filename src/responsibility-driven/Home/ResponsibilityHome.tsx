@@ -1,9 +1,10 @@
 import { Outlet } from 'react-router-dom';
+import S from './ResponsibilityHome.module.css';
 
 const ResponsibilityHome = () => {
   return (
     <div>
-      <p>현재: 책임 중심 설계</p>
+      <p className={S.title}>현재: 책임 중심 설계</p>
       <Outlet />
     </div>
   );
