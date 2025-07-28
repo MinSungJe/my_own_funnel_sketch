@@ -1,9 +1,11 @@
 import { useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDataFunnelContext } from '../../contexts/useDataContext';
 
 const DName = () => {
+  const { dataFunnelData, setDataFunnelData } = useDataFunnelContext();
   const navigate = useNavigate();
-  const [name, setName] = useState('');
+  const [name, setName] = useState(dataFunnelData.name ?? '');
 
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -11,6 +13,7 @@ const DName = () => {
 
   const handleNameNextButton = () => {
     navigate('/data/date');
+    setDataFunnelData((prev) => ({ ...prev, name }));
   };
 
   return (

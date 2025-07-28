@@ -5,6 +5,7 @@ import ResponsibilityHome from '../responsibility-driven/Home/ResponsibilityHome
 import DName from '../data-driven/pages/Name/DName';
 import DDate from '../data-driven/pages/Date/DDate';
 import DComplete from '../data-driven/pages/Complete/DComplete';
+import DataContextProvider from '../data-driven/contexts/DataContextProvider';
 
 const router = createBrowserRouter([
   {
@@ -13,7 +14,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'data',
-        element: <DataHome />,
+        element: (
+          <DataContextProvider>
+            <DataHome />
+          </DataContextProvider>
+        ),
         children: [
           {
             path: 'name',
